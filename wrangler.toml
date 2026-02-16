@@ -1,0 +1,7 @@
+name = "peons-gold"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "out"
+
+[[kv_namespaces]]
+binding = "GAME_STATE"
+id = "eeb5a571f09d4541b407c9d9750bd214"
