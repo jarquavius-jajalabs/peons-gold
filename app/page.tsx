@@ -98,6 +98,7 @@ export default function LandingPage() {
   }
 
   const handleEnter = () => {
+    if (!codeValid) return
     if (!connected) {
       setVisible(true)
       return
@@ -106,13 +107,13 @@ export default function LandingPage() {
     setTimeout(() => router.push('/dashboard'), 800)
   }
 
-  // Auto-enter when wallet connects
+  // Auto-enter when wallet connects after a valid invite code is entered
   useEffect(() => {
     if (connected && codeValid) {
       setEntered(true)
       setTimeout(() => router.push('/dashboard'), 800)
     }
-  }, [connected])
+  }, [connected, codeValid, router])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
@@ -170,18 +171,20 @@ export default function LandingPage() {
           {connected ? (
             <Button
               variant="frame"
-              className="w-full text-lg py-5 text-amber-100 hover:scale-[1.02] transition-transform"
+              className="w-full text-lg py-5 text-amber-100 hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               onClick={handleEnter}
+              disabled={!codeValid}
             >
-              ⚔️ Enter the Mines
+              {codeValid ? '⚔️ Enter the Mines' : '🔐 Enter Invite Code'}
             </Button>
           ) : (
             <Button
               variant="frame"
-              className="w-full text-lg py-5 text-amber-100 hover:scale-[1.02] transition-transform"
-              onClick={() => setVisible(true)}
+              className="w-full text-lg py-5 text-amber-100 hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              onClick={handleEnter}
+              disabled={!codeValid}
             >
-              👛 Connect Wallet & Enter
+              {codeValid ? '👛 Connect Wallet & Enter' : '🔐 Enter Invite Code'}
             </Button>
           )}
           {connected && publicKey && (
@@ -190,7 +193,11 @@ export default function LandingPage() {
             </p>
           )}
           <p className="text-amber-900/60 text-xs text-center">
-            {connected ? 'No invite code? Ask a fellow peon for one.' : 'Connect Phantom or Solflare to enter.'}
+            {!codeValid
+              ? 'Enter an invite code to unlock the mines.'
+              : connected
+                ? 'Wallet ready. Enter the mines when you are.'
+                : 'Connect Phantom or Solflare to enter.'}
           </p>
         </div>
       </div>

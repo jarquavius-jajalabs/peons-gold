@@ -52,3 +52,7 @@ npx wrangler pages deploy out --project-name=peons-gold --commit-dirty=true
 - Started: 2026-02-10
 - Concept: Simple clicker → evolve into Solana minter game
 - UI from: warcraftcn-ui (banteg's components)
+
+## Related
+
+[[Peons Gold]] | [[Solana]] | [[Cloudflare]] | [[jajaLabs]]
