@@ -1,7 +1,7 @@
 # Peon's Gold
 
 ## Overview
-Warcraft-themed clicker game that will evolve into a Solana minter/NFT game.
+Warcraft-themed idle mining game evolving into a Solana minter/NFT game.
 
 **Live:** https://peons-gold.pages.dev
 
@@ -9,18 +9,27 @@ Warcraft-themed clicker game that will evolve into a Solana minter/NFT game.
 - **Frontend:** Next.js 14 + Tailwind CSS
 - **UI Kit:** warcraftcn-ui (Warcraft-themed components)
 - **Hosting:** Cloudflare Pages
-- **Blockchain:** Solana (planned)
+- **Blockchain:** Solana wallet + SOL transfer flow partially integrated
 
 ## Current Features
-- Click to mine gold
-- Gold counter with pulse animation
-- Floating gold coin particles
-- Random peon voice line quotes
-- Warcraft-style UI (buttons, cards, fonts)
-- Atmospheric background with vignette + noise texture
+- Wallet-gated gameplay using Solana wallet adapter
+- Dashboard with mines, peons, packs, roster, referrals, economy, and leaderboard surfaces
+- Cloudflare Pages Functions backed by KV for player state
+- Mine purchase flow that sends `0.01 SOL` to the treasury wallet, then verifies the transaction server-side before adding a mine
+- Claim/open-pack/assign-peon APIs with local game state persistence
+- Warcraft-style UI, audio/toast feedback, and animated gold counters
 
-## Planned Features (Solana Minter)
-- [ ] Wallet connection (Phantom, Solflare)
+## Solana Status
+
+- [x] Wallet connection (Phantom, Solflare)
+- [x] SOL transfer for buying a mine
+- [x] Server-side transaction lookup and treasury transfer validation
+- [ ] NFT peon minting
+- [ ] On-chain gold token (`$GOLD` or `$PEON`)
+- [ ] Token/NFT-backed staking and reward accounting
+
+## Planned Features (Minter / On-Chain Game)
+
 - [ ] Mint NFT peons
 - [ ] Peon staking for passive gold
 - [ ] On-chain gold token ($GOLD or $PEON)
@@ -32,8 +41,11 @@ Warcraft-themed clicker game that will evolve into a Solana minter/NFT game.
 peons-gold/
 ├── app/
 │   ├── layout.tsx
-│   ├── page.tsx        # Main clicker UI
+│   ├── page.tsx        # Invite/wallet gate
+│   ├── dashboard/      # Main game dashboard
 │   └── globals.css     # Styles + background
+├── functions/api/      # Cloudflare Pages API routes
+├── lib/                # Wallet, API, and game helpers
 ├── components/ui/warcraftcn/
 │   ├── button.tsx
 │   ├── card.tsx

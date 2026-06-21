@@ -54,7 +54,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   for (const ix of instructions) {
     if (ix.parsed?.type === 'transfer' && ix.program === 'system') {
       const info = ix.parsed.info
-      if (info.destination === TREASURY && info.lamports >= MINE_COST_LAMPORTS) {
+      if (info.source === wallet && info.destination === TREASURY && info.lamports >= MINE_COST_LAMPORTS) {
         validTransfer = true
         break
       }
@@ -63,6 +63,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (!validTransfer) {
     return new Response(JSON.stringify({ error: 'Transaction does not contain valid payment to treasury' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    })
+  }
+
+  const usedTxKey = `tx:${txSignature}`
+  const usedBy = await context.env.GAME_STATE.get(usedTxKey)
+  if (usedBy) {
+    return new Response(JSON.stringify({ error: 'Transaction already used' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
     })
@@ -93,6 +102,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   state.mines.push(mine)
 
+  await context.env.GAME_STATE.put(usedTxKey, wallet)
   await context.env.GAME_STATE.put(`player:${wallet}`, JSON.stringify(state))
 
   return new Response(JSON.stringify({ state, mine }), {
