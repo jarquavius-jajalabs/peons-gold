@@ -18,13 +18,6 @@ export async function fetchState(wallet: string): Promise<PlayerState> {
   return apiFetch<PlayerState>(`/state?wallet=${encodeURIComponent(wallet)}`)
 }
 
-export async function saveState(wallet: string, state: PlayerState): Promise<PlayerState> {
-  return apiFetch<PlayerState>('/state', {
-    method: 'PUT',
-    body: JSON.stringify({ wallet, state }),
-  })
-}
-
 export async function claimGoldApi(wallet: string): Promise<{ state: PlayerState; claimed: number }> {
   return apiFetch('/claim', {
     method: 'POST',

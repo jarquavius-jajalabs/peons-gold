@@ -6,7 +6,7 @@ interface Env {
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
@@ -31,22 +31,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   return new Response(JSON.stringify(state), {
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
-  })
-}
-
-export const onRequestPut: PagesFunction<Env> = async (context) => {
-  const body = await context.request.json() as { wallet: string; state: any }
-  if (!body.wallet || !body.state) {
-    return new Response(JSON.stringify({ error: 'wallet and state required' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
-    })
-  }
-
-  await context.env.GAME_STATE.put(`player:${body.wallet}`, JSON.stringify(body.state))
-
-  return new Response(JSON.stringify(body.state), {
     headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
   })
 }
