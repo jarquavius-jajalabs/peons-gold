@@ -1,4 +1,5 @@
 import { rollPeon, type PlayerState } from '../../lib/mock-data'
+import { verifySignedAction, type SignedActionAuth } from './auth'
 
 interface Env {
   GAME_STATE: KVNamespace
@@ -15,10 +16,18 @@ export const onRequestOptions: PagesFunction<Env> = async () => {
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { wallet } = await context.request.json() as { wallet: string }
+  const { wallet, auth } = await context.request.json() as { wallet: string; auth?: SignedActionAuth }
   if (!wallet) {
     return new Response(JSON.stringify({ error: 'wallet required' }), {
       status: 400,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    })
+  }
+
+  const authError = await verifySignedAction(context.env.GAME_STATE, wallet, 'open-pack', '', auth)
+  if (authError) {
+    return new Response(JSON.stringify({ error: authError }), {
+      status: 401,
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
     })
   }

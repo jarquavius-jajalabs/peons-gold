@@ -118,7 +118,7 @@ export default function Dashboard() {
   const [mounted, setMounted] = useState(false)
   const { play } = useSound()
   const { toast } = useToast()
-  const { connected, publicKey } = useWallet()
+  const { connected, publicKey, signMessage } = useWallet()
   const { balance, refresh: refreshBalance } = useSolBalance()
   const { transfer, loading: txLoading } = useSolTransfer()
   const router = useRouter()
@@ -144,14 +144,14 @@ export default function Dashboard() {
   }, [mounted, connected, publicKey])
 
   const handleClaim = useCallback(async () => {
-    if (!publicKey) return
-    const amount = await claimGold(publicKey.toBase58())
+    if (!publicKey || !signMessage) return
+    const amount = await claimGold(publicKey.toBase58(), signMessage)
     play('gold_claim')
     setClaimFlash(true)
     toast(`+${amount.toFixed(1)} $GOLD claimed!`, 'gold')
     setTimeout(() => setClaimFlash(false), 500)
     setLocalState(getCachedState())
-  }, [play, toast, publicKey])
+  }, [play, toast, publicKey, signMessage])
 
   const handleBuyMine = useCallback(async () => {
     if (txLoading || !publicKey || !state) return

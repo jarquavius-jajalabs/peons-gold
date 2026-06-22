@@ -1,4 +1,5 @@
 import type { PlayerState } from '../../lib/mock-data'
+import { verifySignedAction, type SignedActionAuth } from './auth'
 
 interface Env {
   GAME_STATE: KVNamespace
@@ -15,12 +16,21 @@ export const onRequestOptions: PagesFunction<Env> = async () => {
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { wallet, peonId, mineId, shaft } = await context.request.json() as {
-    wallet: string; peonId: string; mineId: string; shaft: number
+  const { wallet, peonId, mineId, shaft, auth } = await context.request.json() as {
+    wallet: string; peonId: string; mineId: string; shaft: number; auth?: SignedActionAuth
   }
   if (!wallet || !peonId || !mineId || shaft === undefined) {
     return new Response(JSON.stringify({ error: 'wallet, peonId, mineId, shaft required' }), {
       status: 400,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    })
+  }
+
+  const authPayload = `${peonId}:${mineId}:${shaft}`
+  const authError = await verifySignedAction(context.env.GAME_STATE, wallet, 'assign-peon', authPayload, auth)
+  if (authError) {
+    return new Response(JSON.stringify({ error: authError }), {
+      status: 401,
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
     })
   }

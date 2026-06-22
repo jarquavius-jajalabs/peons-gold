@@ -65,7 +65,7 @@ export default function MineClient({ id }: { id: string }) {
   const [mounted, setMounted] = useState(false)
   const { play } = useSound()
   const { toast } = useToast()
-  const { publicKey, connected } = useWallet()
+  const { publicKey, connected, signMessage } = useWallet()
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -109,8 +109,8 @@ export default function MineClient({ id }: { id: string }) {
   const fillPercent = (assignedPeons.length / mine.shafts) * 100
 
   const handleAssign = async (peonId: string) => {
-    if (selectedShaft === null || !publicKey) return
-    const success = await assignPeon(publicKey.toBase58(), peonId, mine.id, selectedShaft)
+    if (selectedShaft === null || !publicKey || !signMessage) return
+    const success = await assignPeon(publicKey.toBase58(), peonId, mine.id, selectedShaft, signMessage)
     if (success) {
       play('peon_assign')
       const peon = state.peons.find(p => p.id === peonId)

@@ -175,14 +175,14 @@ export default function PacksPage() {
   const shakeRef = useRef<NodeJS.Timeout>()
   const { play } = useSound()
   const { toast } = useToast()
-  const { publicKey } = useWallet()
+  const { publicKey, signMessage } = useWallet()
 
   const bestRarity = results.length > 0
     ? (['mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common'] as Rarity[]).find(r => results.some(p => p.rarity === r)) || 'common'
     : 'common'
 
   const handleOpenPack = useCallback(async () => {
-    if (!publicKey || opening) return
+    if (!publicKey || !signMessage || opening) return
     setPhase('shaking')
     setRevealedCount(0)
     setShakeIntensity(0)
@@ -196,7 +196,7 @@ export default function PacksPage() {
     }, 100)
 
     try {
-      const peons = await openPack(publicKey.toBase58())
+      const peons = await openPack(publicKey.toBase58(), signMessage)
       clearInterval(shakeInterval)
       setResults(peons)
       play('pack_open')
@@ -211,7 +211,7 @@ export default function PacksPage() {
     }
 
     shakeRef.current = shakeInterval
-  }, [play, publicKey, opening, toast])
+  }, [play, publicKey, signMessage, opening, toast])
 
   const handleCardRevealed = useCallback(() => {
     setRevealedCount(prev => {
