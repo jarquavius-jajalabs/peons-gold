@@ -16,7 +16,7 @@ Warcraft-themed idle mining game evolving into a Solana minter/NFT game.
 - Dashboard with mines, peons, packs, roster, referrals, economy, and leaderboard surfaces
 - Cloudflare Pages Functions backed by KV for player state
 - Mine purchase flow that sends `0.01 SOL` to the treasury wallet, then verifies the transaction server-side before adding a mine
-- Claim/open-pack/assign-peon APIs with local game state persistence
+- Claim/open-pack/assign-peon APIs with signed wallet-action verification and local game state persistence
 - Warcraft-style UI, audio/toast feedback, and animated gold counters
 
 ## Solana Status
@@ -24,6 +24,7 @@ Warcraft-themed idle mining game evolving into a Solana minter/NFT game.
 - [x] Wallet connection (Phantom, Solflare)
 - [x] SOL transfer for buying a mine
 - [x] Server-side transaction lookup and treasury transfer validation
+- [x] Signed wallet-message verification for free state mutations
 - [ ] NFT peon minting
 - [ ] On-chain gold token (`$GOLD` or `$PEON`)
 - [ ] Token/NFT-backed staking and reward accounting
